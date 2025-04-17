@@ -19,14 +19,12 @@ jobs:
         run: |
           cd backend
           mvn clean package -DskipTests
-          ls -la target/
 
       - name: Build Frontend
         run: |
           cd frontend
           npm install
           npm run build
-          ls -la build/ 
 
       - name: Deploy to Render
         env:
@@ -38,7 +36,6 @@ jobs:
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Accept: application/json" \
             "https://api.render.com/v1/services/$BACKEND_SERVICE_ID/deploys"
-
           curl -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Accept: application/json" \

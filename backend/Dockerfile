@@ -1,6 +1,10 @@
-FROM eclipse-temurin:23
+FROM maven:3.9-eclipse-temurin-21 AS builder
 WORKDIR /app
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+COPY . .
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:21
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
