@@ -1,7 +1,7 @@
 name: Deploy to Render
 on:
   push:
-    branches: [ "main" ] 
+    branches: [main]
 
 jobs:
   build-and-deploy:
@@ -13,27 +13,27 @@ jobs:
         run: |
           cd backend
           mvn clean package -DskipTests
-          ls -la target/  # Проверка, что JAR создан
-
-      - name: Deploy Backend
-        uses: render-actions/deploy@v1
-        with:
-          apiKey: ${{ secrets.RENDER_API_KEY }}
-          serviceId: ${{ secrets.BACKEND_SERVICE_ID }}
-          dockerfilePath: backend/Dockerfile
-          buildArgs: |
-            JAR_FILE=target/*.jar
+          ls -la target/
 
       - name: Build Frontend
         run: |
           cd frontend
           npm install
           npm run build
-          ls -la build/  # Проверка сборки
+          ls -la build/ 
 
-      - name: Deploy Frontend
-        uses: render-actions/deploy@v1
-        with:
-          apiKey: ${{ secrets.RENDER_API_KEY }}
-          serviceId: ${{ secrets.FRONTEND_SERVICE_ID }}
-          dockerfilePath: frontend/Dockerfile
+      - name: Deploy to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          BACKEND_SERVICE_ID: ${{ secrets.BACKEND_SERVICE_ID }}
+          FRONTEND_SERVICE_ID: ${{ secrets.FRONTEND_SERVICE_ID }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Accept: application/json" \
+            "https://api.render.com/v1/services/$BACKEND_SERVICE_ID/deploys"
+
+          curl -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Accept: application/json" \
+            "https://api.render.com/v1/services/$FRONTEND_SERVICE_ID/deploys"
