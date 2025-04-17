@@ -11,7 +11,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins("https://frontendv2-oe6z.onrender.com")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true)
