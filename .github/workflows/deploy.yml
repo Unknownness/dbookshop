@@ -14,39 +14,17 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: 'maven'
 
       - name: Build Backend
         run: |
           cd backend
           mvn clean package -DskipTests
-          ls -la target/
-      - uses: actions/upload-artifact@v4
-        with:
-          name: backend-jar
-          path: backend/target/*.jar
 
       - name: Build Frontend
         run: |
           cd frontend
           npm install
           npm run build
-          ls -la build/  # Проверка
-      - uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend/build/
-
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Prepare Files
-        run: |
-          mkdir -p backend/target frontend/build
-          cp artifacts/backend-jar/*.jar backend/target/
-          cp -r artifacts/frontend-build/* frontend/build/
 
       - name: Deploy to Render
         env:
