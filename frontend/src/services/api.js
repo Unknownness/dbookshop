@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://backend-pzu1.onrender.com',
+  baseURL: 'https://backendv2-nf6b.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },
