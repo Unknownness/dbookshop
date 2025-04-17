@@ -1,6 +1,6 @@
 FROM node:18 AS builder
 WORKDIR /app
-COPY frontend/package.json frontend/package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm ci --no-audit
 COPY . .
 RUN npm run build
