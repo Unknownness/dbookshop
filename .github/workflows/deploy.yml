@@ -9,24 +9,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
       - name: Build Backend
         run: |
           cd backend
           mvn clean package -DskipTests
-          ls -la target/
+          ls -la target/  # Проверка
+      - uses: actions/upload-artifact@v3
+        with:
+          name: backend-jar
+          path: backend/target/*.jar
 
       - name: Build Frontend
         run: |
           cd frontend
           npm install
           npm run build
-          ls -la build/ 
+          ls -la build/  # Проверка
+      - uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: frontend/build/
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Prepare Files
+        run: |
+          mkdir -p backend/target frontend/build
+          cp artifacts/backend-jar/*.jar backend/target/
+          cp -r artifacts/frontend-build/* frontend/build/
 
       - name: Deploy to Render
         env:
@@ -38,7 +51,6 @@ jobs:
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Accept: application/json" \
             "https://api.render.com/v1/services/$BACKEND_SERVICE_ID/deploys"
-
           curl -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Accept: application/json" \
